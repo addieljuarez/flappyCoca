@@ -34,8 +34,8 @@ local wBird = -320
 local g = 800
 local dt = 0.025
 
--- local score = 0
-local score = 50
+local score = 0
+-- local score = 50
 local bestScore = 0
 local scoreStep = 5
 
@@ -64,71 +64,74 @@ local function loadSounds()
 end
 
 
--- local function call_VK_event()
---     local args={}
---     args.user_id='33251324'
---     args.activity_id=2
---     args.value=score
---     vk.api('secure.addAppEvent', args)
--- end
+local function call_VK_event()
+    local args={}
+    args.user_id='33251324'
+    args.activity_id=2
+    args.value=score
+    vk.api('secure.addAppEvent', args)
+end
 
 
--- local function saveScoreToVk()
+local function saveScoreToVk()
 
---   if score>3 then
---     call_VK_event()
---   elseif score>0 then
---     vk.showLeaderboardBox(score)
---   else
---     vk.showShareBox("I just scored " .. score .. "! Create your own game with Corona.", {"https://coronalabs.com/", }, "wall")
---   end
--- end
+    if score>3 then
+        call_VK_event()
+    elseif score>0 then
+        vk.showLeaderboardBox(score)
+    else
+        vk.showShareBox("I just scored " .. score .. "! Create your own game with Corona.", {"https://coronalabs.com/", }, "wall")
+    end
+end
 
 
 local function calcRandomHole()
    return 100 + 20*math.random(10)
 end
 
--- local function loadBestScore()
---   local path = system.pathForFile( "bestscore.txt", system.DocumentsDirectory )
+local function loadBestScore()
+    local path = system.pathForFile( "bestscore.txt", system.DocumentsDirectory )
 
--- -- Open the file handle
---   local file, errorString = io.open( path, "r" )
+    -- Open the file handle
+    local file, errorString = io.open( path, "r" )
 
---   if not file then
---     -- Error occurred; output the cause
---     print( "File error: " .. errorString )
---   else
---     -- Read data from file
---     local contents = file:read( "*a" )
---     -- Output the file contents
---     bestScore = tonumber( contents )
---     -- Close the file handle
---     io.close( file )
--- end
+    if not file then
+        -- Error occurred; output the cause
+        print( "File error: " .. errorString )
+    else
+        print( "Contents of " .. path )
+        -- Read data from file
+        local contents = file:read( "*a" )
+        print( 'contents' .. contents )
+        -- Output the file contents
+        bestScore = tonumber( contents )
+        -- Close the file handle
+        io.close( file )
+    end
+    print( "bestScore = ", bestScore )
 
--- file = nil
--- end
+    file = nil
+end
 
--- local function saveBestScore()
--- -- Path for the file to write
---   local path = system.pathForFile( "bestscore.txt", system.DocumentsDirectory )
---   local file, errorString = io.open( path, "w" )
---   if not file then
---     -- Error occurred; output the cause
---     print( "File error: " .. errorString )
---   else
---       file:write( bestScore )
---       io.close( file )
---   end
---   file = nil
-
-
--- -- show appodeal ad
--- --  appodeal.show()
+local function saveBestScore()
+-- Path for the file to write
+    local path = system.pathForFile( "bestscore.txt", system.DocumentsDirectory )
+    local file, errorString = io.open( path, "w" )
+    if not file then
+        -- Error occurred; output the cause
+        print( "File error: " .. errorString )
+    else
+        file:write( bestScore )
+        io.close( file )
+    end
+    file = nil
 
 
--- end
+    -- show appodeal ad
+    --  appodeal.show()
+
+
+end
 
 
 local function setupBird()
@@ -180,7 +183,8 @@ local function initGame()
     gameOver.y = 0
     gameOver.alpha = 0
     board.y = 0
-    board.alpha = 0
+    -- board.alpha = 0
+    board.alpha = 1
     audio.play( swooshingSound )
     transition.to( bird, { time=300, x=xBird, y=yBird, rotation = 0 } )
     transition.to( getReady, { time=600, y=yReady, transition=easing.outBounce, onComplete=prompt   } ) -- mueve el get ready al empezar el juego
@@ -265,15 +269,14 @@ local function crash()
     board.y = 0
     board.alpha = 1
 
-    -- ToDo guardar la puntuacion en vk
---   saveScoreToVk()
+    saveScoreToVk()
 
 
 
     if score>bestScore then
         bestScore = score
-        -- ToDo guardar la puntuacion en el dispositivo
-        -- saveBestScore()
+
+        saveBestScore()
     end
     bestTitle.text = bestScore
     scoreTitle.text = score
@@ -412,6 +415,7 @@ local function setupImages()
 
     silver = display.newImageRect(board, "Assets/silver.png", 44, 44 )
     silver.x = -64
+    -- silver.x = 0
     silver.y = 4
 
     gold = display.newImageRect(board, "Assets/gold.png", 44, 44 )
@@ -420,7 +424,7 @@ local function setupImages()
 
     board.x = display.contentCenterX
     board.y = 0
-    board.alpha = 0
+    board.alpha = 1
 
     local txt = {
         x=display.contentCenterX, y=60,
@@ -446,7 +450,7 @@ setupBird()
 setupExplosion()
 setupLand()
 initGame()
--- loadBestScore()
+loadBestScore()
 gameLoopTimer = timer.performWithDelay( 25, gameLoop, 0 ) -- este hacxe que se mueva el esceanrio con la funcion gameloop
 
 
