@@ -148,12 +148,9 @@ local function setupBird()
     }
 
 
-
-
-
-  bird = display.newSprite( imageSheet, sequenceData )
-  bird.x = xBird
-  bird.y = yBird
+    bird = display.newSprite( imageSheet, sequenceData )
+    bird.x = xBird
+    bird.y = yBird
 end
 
 -- local function prompt(tempo)
@@ -185,23 +182,23 @@ end
 -- end
 
 
--- local function wing()
---   if gameStatus==0 then
---     gameStatus=1
---     getReady.alpha = 0
---   end
+local function wing()
+    if gameStatus==0 then
+        gameStatus=1
+        getReady.alpha = 0
+    end
 
---   if gameStatus==1 then
---     vBird = wBird
---     bird:play()
---     audio.play( wingSound )
---   end
+    if gameStatus==1 then
+        vBird = wBird
+        bird:play()
+        -- audio.play( wingSound )
+    end
 
---   if gameStatus==3 then
---     gameStatus=0
---     initGame()
---   end
--- end
+    -- if gameStatus==3 then
+    --     gameStatus=0
+    --     initGame()
+    -- end
+end
 
 -- local function  setupExplosion()
 --   local dx = 31
@@ -361,7 +358,7 @@ local function setupImages()
     ground.x = display.contentCenterX
     ground.y = display.contentCenterY
 --   ToDo add wing function
---   ground:addEventListener("tap", wing)
+    ground:addEventListener("tap", wing)
 
     for i=1,3 do
         --   ToDo change image
@@ -373,15 +370,13 @@ local function setupImages()
     getReady = display.newImageRect( "Assets/getready.png", 200, 60 )
     getReady.x = display.contentCenterX
     getReady.y = yReady
---   ToDo add alpha 0
---   getReady.alpha = 0
+    getReady.alpha = 0
 
 --   ToDo change image
     gameOver = display.newImageRect( "Assets/gameover.png", 200, 60 )
     gameOver.x = display.contentCenterX
     gameOver.y = 0
---   ToDo add alpha 0
---   gameOver.alpha = 0
+    gameOver.alpha = 0
 
     board = display.newGroup()
 --   ToDo change image
@@ -402,7 +397,7 @@ local function setupImages()
 
     board.x = display.contentCenterX
     board.y = 0
---   board.alpha = 0
+    board.alpha = 0
 
     local txt = {
         x=display.contentCenterX, y=60,
@@ -421,8 +416,8 @@ end
 -- --        end
 -- end
 
--- -- Start application point
--- loadSounds()
+-- Start application point
+loadSounds()
 setupImages()
 setupBird()
 -- setupExplosion()
@@ -462,7 +457,7 @@ setupBird()
 --     end
 -- end
 
--- display.setStatusBar( display.HiddenStatusBar )
+display.setStatusBar( display.HiddenStatusBar )
 
 -- if system.getInfo('platform') ~= 'html5' then
 -- 	timer.performWithDelay( 100, function( )
