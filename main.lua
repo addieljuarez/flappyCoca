@@ -8,55 +8,55 @@
 
 
 
--- local vk = require("plugin_vk_direct")
--- --local appodeal = require( "plugin.appodeal" )
+local vk = require("plugin_vk_direct")
+--local appodeal = require( "plugin.appodeal" )
 
 
--- local gameStatus = 0
+local gameStatus = 0
 
--- local yLand = display.actualContentHeight - display.actualContentHeight*0.2
--- local hLand = display.actualContentHeight * 0.1
--- local xLand = display.contentCenterX
+local yLand = display.actualContentHeight - display.actualContentHeight*0.2
+local hLand = display.actualContentHeight * 0.1
+local xLand = display.contentCenterX
 
--- local yBird = display.contentCenterY-50
--- local xBird = display.contentCenterX-50
+local yBird = display.contentCenterY-50
+local xBird = display.contentCenterX-50
 
 local wPipe = display.contentCenterX+10
--- local yReady = display.contentCenterY-140
+local yReady = display.contentCenterY-140
 
--- local uBird = -200
--- local vBird = 0
--- local wBird = -320
--- local g = 800
--- local dt = 0.025
+local uBird = -200
+local vBird = 0
+local wBird = -320
+local g = 800
+local dt = 0.025
 
 local score = 0
 local bestScore = 0
--- local scoreStep = 5
+local scoreStep = 5
 
--- local bird
--- local land
+local bird
+local land
 local title
 local getReady
--- local gameOver
--- local emitter
+local gameOver
+local emitter
 
 local board
 local scoreTitle
 local bestTitle
--- local silver
--- local gold
+local silver
+local gold
 
 local pipes = {}
 
--- local function loadSounds()
---   dieSound = audio.loadSound( "Sounds/sfx_die.caf" )
---   hitSound = audio.loadSound( "Sounds/sfx_hit.caf" )
---   pointSound = audio.loadSound( "Sounds/sfx_point.aif" )
---   swooshingSound = audio.loadSound( "Sounds/sfx_swooshing.caf" )
---   wingSound = audio.loadSound( "Sounds/sfx_wing.caf" )
---   boomSound = audio.loadSound( "Sounds/sfx_boom.mp3" )
--- end
+local function loadSounds()
+  dieSound = audio.loadSound( "Sounds/sfx_die.caf" )
+  hitSound = audio.loadSound( "Sounds/sfx_hit.caf" )
+  pointSound = audio.loadSound( "Sounds/sfx_point.aif" )
+  swooshingSound = audio.loadSound( "Sounds/sfx_swooshing.caf" )
+  wingSound = audio.loadSound( "Sounds/sfx_wing.caf" )
+  boomSound = audio.loadSound( "Sounds/sfx_boom.mp3" )
+end
 
 
 -- local function call_VK_event()
@@ -129,26 +129,31 @@ end
 local function setupBird()
     local options =
     {
---       width = 70,
---       height = 50,
---       numFrames = 4,
---       sheetContentWidth = 280,  -- width of original 1x size of entire sheet
---       sheetContentHeight = 50  -- height of original 1x size of entire sheet
+      width = 70,
+      height = 50,
+      numFrames = 4,
+      sheetContentWidth = 280,  -- width of original 1x size of entire sheet
+      sheetContentHeight = 50  -- height of original 1x size of entire sheet
     }
 --   local imageSheet = graphics.newImageSheet( "Assets/bird.png", options )
+    local imageSheet = graphics.newImageSheet( "Assets/FlappyBirdAssets/Player/StyleBird2/Bird2_3.png", options )
 
---   local sequenceData =
---   {
---       name="walking",
---       start=1,
---       count=3,
---       time=300,
---       loopCount = 2,   -- Optional ; default is 0 (loop indefinitely)
---       loopDirection = "forward"    -- Optional ; values include "forward" or "bounce"
---   }
---   bird = display.newSprite( imageSheet, sequenceData )
---   bird.x = xBird
---   bird.y = yBird
+    local sequenceData = {
+        name="walking",
+        start=1,
+        count=3,
+        time=300,
+        loopCount = 2,   -- Optional ; default is 0 (loop indefinitely)
+        loopDirection = "forward"    -- Optional ; values include "forward" or "bounce"
+    }
+
+
+
+
+
+  bird = display.newSprite( imageSheet, sequenceData )
+  bird.x = xBird
+  bird.y = yBird
 end
 
 -- local function prompt(tempo)
