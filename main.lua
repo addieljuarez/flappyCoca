@@ -52,9 +52,9 @@ local pipes = {}
 local function loadSounds()
   dieSound = audio.loadSound( "Sounds/sfx_die.caf" )
   hitSound = audio.loadSound( "Sounds/sfx_hit.caf" )
-  pointSound = audio.loadSound( "Sounds/sfx_point.aif" )
-  swooshingSound = audio.loadSound( "Sounds/sfx_swooshing.caf" )
-  wingSound = audio.loadSound( "Sounds/sfx_wing.caf" )
+  pointSound = audio.loadSound( "Sounds/sfx_point.aif" ) -- sonido cuando pasas 5 pipes
+  swooshingSound = audio.loadSound( "Sounds/sfx_swooshing.caf" ) -- this sound is when init the game
+  wingSound = audio.loadSound( "Sounds/sfx_wing.caf" )  -- this sound is when bird is flying up and touch the screen
   boomSound = audio.loadSound( "Sounds/sfx_boom.mp3" )
 end
 
@@ -153,33 +153,33 @@ local function setupBird()
     bird.y = yBird
 end
 
--- local function prompt(tempo)
---   bird:play()
--- end
+local function prompt(tempo)
+  bird:play() -- mueve al ave al incio del juego solo recorre los sprites
+end
 
 
--- local function initGame()
---   score = 0
---   scoreStep = 5
---   title.text = score
--- --  title.text = hLand
+local function initGame()
+    score = 0
+    scoreStep = 5
+    title.text = score
+    -- title.text = hLand
 
---   for i=1,3 do
---     pipes[i].x = 400 + display.contentCenterX * (i-1)
---     pipes[i].y =  calcRandomHole()
---   end
---   yBird = display.contentCenterY-50
---   xBird = display.contentCenterX-50
---   getReady.y = 0
---   getReady.alpha = 1
---   gameOver.y = 0
---   gameOver.alpha = 0
---   board.y = 0
---   board.alpha = 0
---   audio.play( swooshingSound )
---   transition.to( bird, { time=300, x=xBird, y=yBird, rotation = 0 } )
---   transition.to( getReady, { time=600, y=yReady, transition=easing.outBounce, onComplete=prompt   } )
--- end
+    for i=1,3 do
+        pipes[i].x = 400 + display.contentCenterX * (i-1)
+        pipes[i].y =  calcRandomHole()
+    end
+    yBird = display.contentCenterY-50
+    xBird = display.contentCenterX-50
+    getReady.y = 0
+    getReady.alpha = 1
+    gameOver.y = 0
+    gameOver.alpha = 0
+    board.y = 0
+    board.alpha = 0
+    audio.play( swooshingSound )
+    transition.to( bird, { time=300, x=xBird, y=yBird, rotation = 0 } )
+    transition.to( getReady, { time=600, y=yReady, transition=easing.outBounce, onComplete=prompt   } ) -- mueve el get ready al empezar el juego
+end
 
 
 local function wing()
@@ -191,50 +191,50 @@ local function wing()
     if gameStatus==1 then
         vBird = wBird
         bird:play()
-        -- audio.play( wingSound )
+        audio.play( wingSound )
     end
 
-    -- if gameStatus==3 then
-    --     gameStatus=0
-    --     initGame()
-    -- end
+    if gameStatus==3 then
+        gameStatus=0
+        initGame()
+    end
 end
 
--- local function  setupExplosion()
---   local dx = 31
---   local p = "Assets/habra.png"
---   local emitterParams = {
---           startParticleSizeVariance = dx/2,
---           startColorAlpha = 0.61,
---           startColorGreen = 0.3031555,
---           startColorRed = 0.08373094,
---           yCoordFlipped = 0,
---           blendFuncSource = 770,
---           blendFuncDestination = 1,
---           rotatePerSecondVariance = 153.95,
---           particleLifespan = 0.7237,
---           tangentialAcceleration = -144.74,
---           startParticleSize = dx,
---           textureFileName = p,
---           startColorVarianceAlpha = 1,
---           maxParticles = 128,
---           finishParticleSize = dx/3,
---           duration = 0.75,
---           finishColorRed = 0.078,
---           finishColorAlpha = 0.75,
---           finishColorBlue = 0.3699196,
---           finishColorGreen = 0.5443883,
---           maxRadiusVariance = 172.63,
---           finishParticleSizeVariance = dx/2,
---           gravityy = 220.0,
---           speedVariance = 258.79,
---           tangentialAccelVariance = -92.11,
---           angleVariance = -300.0,
---           angle = -900.11
---       }
---       emitter = display.newEmitter(emitterParams )
---       emitter:stop()
---     end
+local function  setupExplosion()
+    local dx = 31
+    local p = "Assets/habra.png"
+    local emitterParams = {
+            startParticleSizeVariance = dx/2,
+            startColorAlpha = 0.61,
+            startColorGreen = 0.3031555,
+            startColorRed = 0.08373094,
+            yCoordFlipped = 0,
+            blendFuncSource = 770,
+            blendFuncDestination = 1,
+            rotatePerSecondVariance = 153.95,
+            particleLifespan = 0.7237,
+            tangentialAcceleration = -144.74,
+            startParticleSize = dx,
+            textureFileName = p,
+            startColorVarianceAlpha = 1,
+            maxParticles = 128,
+            finishParticleSize = dx/3,
+            duration = 0.75,
+            finishColorRed = 0.078,
+            finishColorAlpha = 0.75,
+            finishColorBlue = 0.3699196,
+            finishColorGreen = 0.5443883,
+            maxRadiusVariance = 172.63,
+            finishParticleSizeVariance = dx/2,
+            gravityy = 220.0,
+            speedVariance = 258.79,
+            tangentialAccelVariance = -92.11,
+            angleVariance = -300.0,
+            angle = -900.11
+        }
+    emitter = display.newEmitter(emitterParams )
+    emitter:stop()
+end
 
 
 -- local function explosion()
@@ -279,7 +279,7 @@ end
 --   transition.to( board, { time=600, y=yReady+100, transition=easing.outBounce } )
 -- end
 
--- local function collision(i)
+local function collision(i)
 --   local dx = 40 -- horizontal space of hole
 --   local dy = 50 -- vertical space of hole
 --   local boom = 0
@@ -292,41 +292,42 @@ end
 --     end
 --   end
 --   return boom
--- end
+end
 
--- local function gameLoop()
---   local eps = 10
---   local leftEdge = -60
---   if gameStatus==1 then
---     xLand = xLand + dt * uBird
---     if xLand<0 then
---       xLand = display.contentCenterX*2+xLand
---     end
---     land.x = xLand
---     for i=1,3 do
---       local xb = xBird-eps
---       local xOld = pipes[i].x
---       local x = xOld + dt * uBird
---       if x<leftEdge then
---         x = wPipe*3+x
---         pipes[i].y =  calcRandomHole()
---       end
---       if xOld > xb  and x <= xb then
---         score = score + 1
---         title.text = score
---         if score==scoreStep then
---           scoreStep = scoreStep + 5
---           audio.play( pointSound )
---         end
---       end
---       pipes[i].x = x
---       if collision(i)==1 then
---         explosion()
---         audio.play( dieSound )
---         gameStatus = 2
---       end
---     end
---   end
+local function gameLoop()
+    local eps = 10
+    local leftEdge = -60
+    if gameStatus==1 then 
+        xLand = xLand + dt * uBird
+        if xLand<0 then
+            xLand = display.contentCenterX*2+xLand
+        end
+        land.x = xLand -- aqui empueza a avanzar el escenario
+        for i=1,3 do
+            local xb = xBird-eps
+            local xOld = pipes[i].x
+            local x = xOld + dt * uBird
+            if x<leftEdge then
+                x = wPipe*3+x
+                pipes[i].y =  calcRandomHole()
+            end
+            if xOld > xb  and x <= xb then
+                score = score + 1
+                title.text = score
+                if score==scoreStep then
+                    scoreStep = scoreStep + 5
+                    audio.play( pointSound )
+                end
+            end
+            pipes[i].x = x
+            if collision(i)==1 then
+            --     explosion()
+            --     audio.play( dieSound )
+            --     gameStatus = 2
+            end
+        end
+    end
+end
 
 --   if gameStatus==1 or gameStatus==2 then
 --     vBird = vBird + dt * g
@@ -345,11 +346,11 @@ end
 --   end
 -- end
 
--- local function setupLand()
---   land = display.newImageRect( "Assets/land.png", display.actualContentWidth*2, hLand*2 )
---   land.x = xLand
---   land.y = yLand+hLand
--- end
+local function setupLand()
+  land = display.newImageRect( "Assets/land.png", display.actualContentWidth*2, hLand*2 )
+  land.x = xLand
+  land.y = yLand+hLand
+end
 
 local function setupImages()
 --   local ground = display.newImageRect( "Assets/ground.png", display.actualContentWidth, display.actualContentHeight )
@@ -357,7 +358,6 @@ local function setupImages()
 
     ground.x = display.contentCenterX
     ground.y = display.contentCenterY
---   ToDo add wing function
     ground:addEventListener("tap", wing)
 
     for i=1,3 do
@@ -401,7 +401,7 @@ local function setupImages()
 
     local txt = {
         x=display.contentCenterX, y=60,
-        text="empty text",
+        text="",
         font="Assets/troika.otf",
         fontSize=35 }
 
@@ -420,11 +420,11 @@ end
 loadSounds()
 setupImages()
 setupBird()
--- setupExplosion()
--- setupLand()
--- initGame()
+setupExplosion()
+setupLand()
+initGame()
 -- loadBestScore()
--- gameLoopTimer = timer.performWithDelay( 25, gameLoop, 0 )
+gameLoopTimer = timer.performWithDelay( 25, gameLoop, 0 ) -- este hacxe que se mueva el esceanrio con la funcion gameloop
 
 
 -- -- debug text line
