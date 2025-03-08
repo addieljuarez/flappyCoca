@@ -13,6 +13,10 @@ local vk = require("plugin_vk_direct")
 
 
 local gameStatus = 0
+-- gameStatus = 0 -- se inicia el juego y se muestra el get ready
+-- gameStatus = 1 -- se inicia el juego y se mueve el escenario
+-- gameStatus = 2 -- se cambia el estado del juego a 2 y termina el juego todo se pausa cuando chocas
+-- gameStatus = 3 -- se cambia el estado del juego a 3 y termina el juego todo se pausa cuando chocas  y puedes empezar de nuevo
 
 local yLand = display.actualContentHeight - display.actualContentHeight*0.2
 local hLand = display.actualContentHeight * 0.1
@@ -30,7 +34,8 @@ local wBird = -320
 local g = 800
 local dt = 0.025
 
-local score = 0
+-- local score = 0
+local score = 50
 local bestScore = 0
 local scoreStep = 5
 
@@ -50,8 +55,8 @@ local gold
 local pipes = {}
 
 local function loadSounds()
-  dieSound = audio.loadSound( "Sounds/sfx_die.caf" )
-  hitSound = audio.loadSound( "Sounds/sfx_hit.caf" )
+  dieSound = audio.loadSound( "Sounds/sfx_die.caf" ) -- sonido de colision 
+  hitSound = audio.loadSound( "Sounds/sfx_hit.caf" ) -- sonido de choque contra el piso
   pointSound = audio.loadSound( "Sounds/sfx_point.aif" ) -- sonido cuando pasas 5 pipes
   swooshingSound = audio.loadSound( "Sounds/sfx_swooshing.caf" ) -- this sound is when init the game
   wingSound = audio.loadSound( "Sounds/sfx_wing.caf" )  -- this sound is when bird is flying up and touch the screen
@@ -237,67 +242,78 @@ local function  setupExplosion()
 end
 
 
--- local function explosion()
---   emitter.x = bird.x
---   emitter.y = bird.y
---   emitter:start()
--- end
+local function explosion()
+    emitter.x = bird.x
+    emitter.y = bird.y
+    emitter:start() -- sale una animacion de explosion
+end
 
 
 
 
--- local function crash()
---   gameStatus = 3
---   audio.play( hitSound )
---   gameOver.y = 0
---   gameOver.alpha = 1
---   transition.to( gameOver, { time=600, y=yReady, transition=easing.outBounce } )
---   board.y = 0
---   board.alpha = 1
+local function crash()
+    gameStatus = 3
+    audio.play( hitSound )
 
+    -- muestra el texto de game over
+    gameOver.y = 0
+    gameOver.alpha = 1
+    -- mueve el texto de game over
+    transition.to( gameOver, { time=600, y=yReady, transition=easing.outBounce } )
 
+    -- muestra el tablero de puntuacion
+    board.y = 0
+    board.alpha = 1
+
+    -- ToDo guardar la puntuacion en vk
 --   saveScoreToVk()
 
 
 
---   if score>bestScore then
---     bestScore = score
---     saveBestScore()
---   end
---   bestTitle.text = bestScore
---   scoreTitle.text = score
---   if score<10 then
---     silver.alpha = 0
---     gold.alpha = 0
---   elseif score<50 then
---     silver.alpha = 1
---     gold.alpha = 0
---   else
---     silver.alpha = 0
---     gold.alpha = 1
---   end
---   transition.to( board, { time=600, y=yReady+100, transition=easing.outBounce } )
--- end
+    if score>bestScore then
+        bestScore = score
+        -- ToDo guardar la puntuacion en el dispositivo
+        -- saveBestScore()
+    end
+    bestTitle.text = bestScore
+    scoreTitle.text = score
+
+    if score<10 then
+        silver.alpha = 0
+        gold.alpha = 0
+    elseif score<50 then
+        silver.alpha = 1
+        gold.alpha = 0
+    else
+        silver.alpha = 0
+        gold.alpha = 1
+    end
+    -- mueve el tablero de puntuacion hacia abajo
+    transition.to( board, { time=600, y=yReady+100, transition=easing.outBounce } )
+end
 
 local function collision(i)
---   local dx = 40 -- horizontal space of hole
---   local dy = 50 -- vertical space of hole
---   local boom = 0
---   local x = pipes[i].x
---   local y = pipes[i].y
+    -- print("------ collision 1 -----", i)
+    -- print("------ collision 2 -----", i)
+    local dx = 40 -- horizontal space of hole
+    local dy = 50 -- vertical space of hole
+    local boom = 0
+    local x = pipes[i].x
+    local y = pipes[i].y
 
---   if xBird > (x-dx) and xBird < (x+dx) then
---     if yBird > (y+dy) or yBird < (y-dy) then
---       boom = 1
---     end
---   end
---   return boom
+    if xBird > (x-dx) and xBird < (x+dx) then
+        if yBird > (y+dy) or yBird < (y-dy) then
+            boom = 1
+        end
+    end
+    return boom
 end
+
 
 local function gameLoop()
     local eps = 10
     local leftEdge = -60
-    if gameStatus==1 then 
+    if gameStatus == 1 then
         xLand = xLand + dt * uBird
         if xLand<0 then
             xLand = display.contentCenterX*2+xLand
@@ -320,31 +336,38 @@ local function gameLoop()
                 end
             end
             pipes[i].x = x
-            if collision(i)==1 then
-            --     explosion()
-            --     audio.play( dieSound )
-            --     gameStatus = 2
+            print("------ collision -----", collision(i))
+             -- collision(i) regresa un booleano si es 1 es que hubo colision si es 0 no hubo colision
+            if collision(i) == 1 then
+                explosion() -- si hay colision se activa la explosion
+                audio.play( dieSound )
+                gameStatus = 2 -- se cambia el estado del juego a 2 y termina el juego todo se pausa
             end
+        end
+    end
+  
+    if gameStatus == 1 or gameStatus == 2 then
+        vBird = vBird + dt * g
+        yBird = yBird + dt * vBird
+        if yBird>yLand-eps then
+            yBird = yLand-eps
+            crash()
+        end
+
+        -- aqui se mueve el pajaro de arriva hacia abajo con el click
+        bird.x = xBird
+        bird.y = yBird
+
+        -- este if es para que el pajaro se incline hacia abajo cuando cae o hacia arriba cuando sube
+        if gameStatus==1 then
+            bird.rotation =  -30*math.atan(vBird/uBird)
+        else
+            bird.rotation = vBird/8
         end
     end
 end
 
---   if gameStatus==1 or gameStatus==2 then
---     vBird = vBird + dt * g
---     yBird = yBird + dt * vBird
---     if yBird>yLand-eps then
---       yBird = yLand-eps
---       crash()
---     end
---     bird.x = xBird
---     bird.y = yBird
---     if gameStatus==1 then
---       bird.rotation =  -30*math.atan(vBird/uBird)
---     else
---       bird.rotation = vBird/8
---     end
---   end
--- end
+
 
 local function setupLand()
   land = display.newImageRect( "Assets/land.png", display.actualContentWidth*2, hLand*2 )
