@@ -183,8 +183,7 @@ local function initGame()
     gameOver.y = 0
     gameOver.alpha = 0
     board.y = 0
-    -- board.alpha = 0
-    board.alpha = 1
+    board.alpha = 0
     audio.play( swooshingSound )
     transition.to( bird, { time=300, x=xBird, y=yBird, rotation = 0 } )
     transition.to( getReady, { time=600, y=yReady, transition=easing.outBounce, onComplete=prompt   } ) -- mueve el get ready al empezar el juego
@@ -373,14 +372,24 @@ end
 
 
 local function setupLand()
-  land = display.newImageRect( "Assets/land.png", display.actualContentWidth*2, hLand*2 )
-  land.x = xLand
-  land.y = yLand+hLand
+    land = display.newImageRect( "Assets/land.png", display.actualContentWidth*2, hLand*2 )
+    -- land = display.newImageRect( "Assets/FlappyBirdAssets/Tiles/Style1/TileStyle1.png", display.actualContentWidth*2, hLand*2 )
+  
+    land.x = xLand
+    land.y = yLand+hLand
+end
+
+
+local function backgroundRandom ()
+  local random = math.random(1, 10)
+  local background = "Assets/FlappyBirdAssets/Background/Background" .. random .. ".png"
+  return background
 end
 
 local function setupImages()
+    
 --   local ground = display.newImageRect( "Assets/ground.png", display.actualContentWidth, display.actualContentHeight )
-    local ground = display.newImageRect( "Assets/FlappyBirdAssets/Background/Background1.png", display.actualContentWidth, display.actualContentHeight )
+    local ground = display.newImageRect( backgroundRandom() , display.actualContentWidth, display.actualContentHeight )
 
     ground.x = display.contentCenterX
     ground.y = display.contentCenterY
@@ -424,7 +433,7 @@ local function setupImages()
 
     board.x = display.contentCenterX
     board.y = 0
-    board.alpha = 1
+    board.alpha = 0
 
     local txt = {
         x=display.contentCenterX, y=60,
