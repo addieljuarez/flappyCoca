@@ -8,9 +8,20 @@
 
 
 
-local vk = require("plugin_vk_direct")
---local appodeal = require( "plugin.appodeal" )
+-- local vk = require("plugin_vk_direct")
+-- local admob = require( "plugin.admob" )
+-- --local appodeal = require( "plugin.appodeal" )
 
+-- local appID = "ca-app-pub-0312758629867943~4865938586"
+-- local bannerUnitID = "ca-app-pub-0312758629867943/2370803034"
+
+-- local menuButtons = {
+-- 	loadBanner = { label="Load Banner Ad", y=120 },
+-- 	showBanner = { label="Show Banner Ad", y=170 },
+-- 	hideBanner = { label="Hide Banner Ad", y=220 },
+-- 	loadInterstitial = { label="Load Interstitial Ad", y=285 },
+-- 	showInterstitial = { label="Show Interstitial Ad", y=335 }
+-- }
 
 local gameStatus = 0
 -- gameStatus = 0 -- se inicia el juego y se muestra el get ready
@@ -69,7 +80,7 @@ local function call_VK_event()
     args.user_id='33251324'
     args.activity_id=2
     args.value=score
-    vk.api('secure.addAppEvent', args)
+    -- vk.api('secure.addAppEvent', args)
 end
 
 
@@ -78,9 +89,9 @@ local function saveScoreToVk()
     if score>3 then
         call_VK_event()
     elseif score>0 then
-        vk.showLeaderboardBox(score)
+        -- vk.showLeaderboardBox(score)
     else
-        vk.showShareBox("I just scored " .. score .. "! Create your own game with Corona.", {"https://coronalabs.com/", }, "wall")
+        -- vk.showShareBox("I just scored " .. score .. "! Create your own game with Corona.", {"https://coronalabs.com/", }, "wall")
     end
 end
 

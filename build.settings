@@ -18,10 +18,19 @@ settings =
 	--
 	android =
 	{
+		minSdkVersion = "21",
 		usesPermissions =
 		{
 			"android.permission.INTERNET",
+			"android.permission.ACCESS_NETWORK_STATE"
 		},
+		applicationChildElements =
+        {
+            [[
+                <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
+                    android:value="ca-app-pub-0312758629867943~4865938586"/>  -- replace with your app id. See: https://goo.gl/fQ2neu
+            ]],
+        },
 	},
 
 	--
@@ -42,14 +51,10 @@ settings =
 	--
 	plugins =
 	{
-		["plugin.vk.direct"] =
-			{
-				publisherId = "com.coronalabs"
-		 	},
-	 	["plugin.appodeal"] =
-	 		{
-		 		publisherId = "com.coronalabs"
-	 		},
+		["plugin.admob"] =
+        {
+            publisherId = "com.coronalabs"
+        },
 
 	},
 
