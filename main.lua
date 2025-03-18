@@ -11,8 +11,11 @@
 
 
 local admob = require( "plugin.admob" )
-local myAppId = "ca-app-pub-0312758629867943/2370803034"
-local myBannerAdUnitId = "ca-app-pub-3940256099942544/6300978111"
+local myAppId = "ca-app-pub-0312758629867943~4865938586"
+-- local myBannerAdUnitIdBottom = "ca-app-pub-0312758629867943/2370803034"
+local myBannerAdUnitIdBottom = "ca-app-pub-3940256099942544/6300978111"
+
+
 
 
 
@@ -60,12 +63,14 @@ local gold
 local pipes = {}
 
 local function loadSounds()
-  dieSound = audio.loadSound( "Sounds/sfx_die.caf" ) -- sonido de colision 
-  hitSound = audio.loadSound( "Sounds/sfx_hit.caf" ) -- sonido de choque contra el piso
-  pointSound = audio.loadSound( "Sounds/sfx_point.aif" ) -- sonido cuando pasas 5 pipes
-  swooshingSound = audio.loadSound( "Sounds/sfx_swooshing.caf" ) -- this sound is when init the game
-  wingSound = audio.loadSound( "Sounds/sfx_wing.caf" )  -- this sound is when bird is flying up and touch the screen
-  boomSound = audio.loadSound( "Sounds/sfx_boom.mp3" )
+    -- boomSound = audio.loadSound( "Sounds/sfx_boom.mp3" )
+    dieSound = audio.loadSound( "Sounds/die.mp3" ) -- sonido de colision 
+    -- dieSound = audio.loadSound( "Sounds/sfx_boom.mp3" ) -- sonido de colision
+    -- hitSound = audio.loadSound( "Sounds/sfx_hit.caf" ) -- sonido de choque contra el piso
+    hitSound = audio.loadSound( "Sounds/hit.mp3" ) -- sonido de choque contra el piso
+    pointSound = audio.loadSound( "Sounds/point.mp3" ) -- sonido cuando pasas 5 pipes
+    swooshingSound = audio.loadSound( "Sounds/swoosh.mp3" ) -- this sound is when init the game
+    wingSound = audio.loadSound( "Sounds/flap.mp3" )  -- this sound is when bird is flying up and touch the screen
 end
 
 
@@ -455,84 +460,40 @@ display.setStatusBar( display.HiddenStatusBar )
 
 
 
-
--- local function adListener( event )
---     -- local json = require( "json" )
---     -- print("-------- Ad event: ")
---     -- print( json.prettify( event ) )
-
---     -- -- if ( event.isError ) then
---     -- --     -- Failed to receive an ad
---     -- --     -- statusText.Text = event.isError;
---     -- -- end
-  
---     -- if ( event.phase == "init" ) then  -- Successful initialization
---     --     print( event.provider )
---     --     print('------------------------------------ init', event.provider)
---     --     -- admob.load( "interstitial", { adUnitId = myInterstitialAdUnitId, hasUserConsent = true } )
---     --     admob.load( "banner", { adUnitId = myBannerAdUnitId, hasUserConsent = true } )
-
---     --     -- local alert = native.showAlert( "Banner", 'todo ok en init', { "OK" } )
---     --     -- admob.load( "rewardedVideo", { adUnitId = myRewardedAdUnitId, hasUserConsent = true } )
---     -- elseif event.phase == "failed" then
---     --     print('------------------------------------ failed', event.provider)
---     --     if event.type == "banner" then
---     --         -- Put your ad loading failover code here
---     --         -- The most common failure reason is lack of ads to show, so simply try to load another ad
---     --         -- You don't want to do this over and over. Eventually, you should give up or try after a longer period of time
---     --         -- local alert = native.showAlert( "Banner", 'error en banner', { "OK" } )
---     --     elseif event.type == "interstitial" then
---     --         -- Put your ad loading failover code here
---     --         -- local alert = native.showAlert( "Interstitial", 'error en interstitial', { "OK" } )
---     --     elseif event.type == "rewardedVideo" then
---     --         -- Put your ad loading failover code here
---     --         -- local alert = native.showAlert( "Rewarded Video", 'error en rewarded video', { "OK" } )
---     --     end
---     -- -- elseif ( event.phase == "displayed" ) then -- Ads were loaded
---     -- --     if event.type == "interstitial" then
---     -- --         admob.load( "interstitial", { adUnitId = myInterstitialAdUnitId, hasUserConsent = true } )
---     -- --     elseif event.type == "rewardedVideo" then
---     -- --         admob.load( "rewardedVideo", { adUnitId = myRewardedAdUnitId, hasUserConsent = true } )
---     -- --     end
---     -- elseif ( event.phase == "reward" ) then -- A rewarded video was completed
---     --     print('------------------------------------ reward', event.provider)
---     --     -- local alert = native.showAlert( "Reward", 'reward', { "OK" } )
---     -- end
--- end
-
 local function adListener( event )
     local json = require( "json" )
     print('------------------------------------ adListener')
-    print("------Ad event: ")
     print( json.prettify( event ) )
 
-    print('------------------------------------ adListener')
-
     if ( event.phase == "init" ) then  -- Successful initialization
-        print('------------------------------------ init', event.provider)
         
-        admob.load( "banner", { adUnitId = myBannerAdUnitId } )
+        admob.load( "banner", { adUnitId = myBannerAdUnitIdBottom } )
+        
 
-        timer.performWithDelay( 10000, function()
+        timer.performWithDelay( 8000, function()
            
-            -- statusText.Text = "Banner is loaded and ready to show 2"
             print('------------------------------------ show 2')
             admob.show( "banner", { y='bottom', bgColor = '#FFFFFF' } )
             print('------------------------------------ show 2')
         end )
+
     end
 end
 
 
 
 -- Start application point
-loadSounds()
+
 setupImages()
 setupBird()
 setupExplosion()
 setupLand()
 initGame()
 loadBestScore()
+-- timer.performWithDelay( 2000, function()
+    loadSounds()
+-- end )
+
 gameLoopTimer = timer.performWithDelay( 25, gameLoop, 0 ) 
 
 
