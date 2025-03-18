@@ -55,7 +55,9 @@ settings =
         {
             publisherId = "com.coronalabs"
         },
-
+		["shared.google.play.services.ads.identifier"] = {
+            publisherId = "com.coronalabs",
+        },
 	},
 
 	--

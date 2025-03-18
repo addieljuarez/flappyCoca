@@ -1,29 +1,23 @@
------------------------------------------------------------------------------------------
---
--- main.lua
---
------------------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------------------
+-- --
+-- -- main.lua
+-- --
+-- -----------------------------------------------------------------------------------------
 
 -- Your code here
 
 
 
--- local vk = require("plugin_vk_direct")
--- local admob = require( "plugin.admob" )
--- --local appodeal = require( "plugin.appodeal" )
 
--- local appID = "ca-app-pub-0312758629867943~4865938586"
--- local bannerUnitID = "ca-app-pub-0312758629867943/2370803034"
 
--- local menuButtons = {
--- 	loadBanner = { label="Load Banner Ad", y=120 },
--- 	showBanner = { label="Show Banner Ad", y=170 },
--- 	hideBanner = { label="Hide Banner Ad", y=220 },
--- 	loadInterstitial = { label="Load Interstitial Ad", y=285 },
--- 	showInterstitial = { label="Show Interstitial Ad", y=335 }
--- }
+local admob = require( "plugin.admob" )
+local myAppId = "ca-app-pub-0312758629867943/2370803034"
+local myBannerAdUnitId = "ca-app-pub-3940256099942544/6300978111"
+
+
 
 local gameStatus = 0
+
 -- gameStatus = 0 -- se inicia el juego y se muestra el get ready
 -- gameStatus = 1 -- se inicia el juego y se mueve el escenario
 -- gameStatus = 2 -- se cambia el estado del juego a 2 y termina el juego todo se pausa cuando chocas
@@ -73,6 +67,7 @@ local function loadSounds()
   wingSound = audio.loadSound( "Sounds/sfx_wing.caf" )  -- this sound is when bird is flying up and touch the screen
   boomSound = audio.loadSound( "Sounds/sfx_boom.mp3" )
 end
+
 
 
 local function call_VK_event()
@@ -349,7 +344,7 @@ local function gameLoop()
                 end
             end
             pipes[i].x = x
-            print("------ collision -----", collision(i))
+            -- print("------ collision -----", collision(i))
              -- collision(i) regresa un booleano si es 1 es que hubo colision si es 0 no hubo colision
             if collision(i) == 1 then
                 explosion() -- si hay colision se activa la explosion
@@ -456,12 +451,79 @@ local function setupImages()
     title:setFillColor( 1, 1, 1 )
 end
 
+display.setStatusBar( display.HiddenStatusBar )
 
--- local function vkListener( event )
--- --        if event.status == "success" then
--- --            loadingText.text = event.method
--- --        end
+
+
+
+-- local function adListener( event )
+--     -- local json = require( "json" )
+--     -- print("-------- Ad event: ")
+--     -- print( json.prettify( event ) )
+
+--     -- -- if ( event.isError ) then
+--     -- --     -- Failed to receive an ad
+--     -- --     -- statusText.Text = event.isError;
+--     -- -- end
+  
+--     -- if ( event.phase == "init" ) then  -- Successful initialization
+--     --     print( event.provider )
+--     --     print('------------------------------------ init', event.provider)
+--     --     -- admob.load( "interstitial", { adUnitId = myInterstitialAdUnitId, hasUserConsent = true } )
+--     --     admob.load( "banner", { adUnitId = myBannerAdUnitId, hasUserConsent = true } )
+
+--     --     -- local alert = native.showAlert( "Banner", 'todo ok en init', { "OK" } )
+--     --     -- admob.load( "rewardedVideo", { adUnitId = myRewardedAdUnitId, hasUserConsent = true } )
+--     -- elseif event.phase == "failed" then
+--     --     print('------------------------------------ failed', event.provider)
+--     --     if event.type == "banner" then
+--     --         -- Put your ad loading failover code here
+--     --         -- The most common failure reason is lack of ads to show, so simply try to load another ad
+--     --         -- You don't want to do this over and over. Eventually, you should give up or try after a longer period of time
+--     --         -- local alert = native.showAlert( "Banner", 'error en banner', { "OK" } )
+--     --     elseif event.type == "interstitial" then
+--     --         -- Put your ad loading failover code here
+--     --         -- local alert = native.showAlert( "Interstitial", 'error en interstitial', { "OK" } )
+--     --     elseif event.type == "rewardedVideo" then
+--     --         -- Put your ad loading failover code here
+--     --         -- local alert = native.showAlert( "Rewarded Video", 'error en rewarded video', { "OK" } )
+--     --     end
+--     -- -- elseif ( event.phase == "displayed" ) then -- Ads were loaded
+--     -- --     if event.type == "interstitial" then
+--     -- --         admob.load( "interstitial", { adUnitId = myInterstitialAdUnitId, hasUserConsent = true } )
+--     -- --     elseif event.type == "rewardedVideo" then
+--     -- --         admob.load( "rewardedVideo", { adUnitId = myRewardedAdUnitId, hasUserConsent = true } )
+--     -- --     end
+--     -- elseif ( event.phase == "reward" ) then -- A rewarded video was completed
+--     --     print('------------------------------------ reward', event.provider)
+--     --     -- local alert = native.showAlert( "Reward", 'reward', { "OK" } )
+--     -- end
 -- end
+
+local function adListener( event )
+    local json = require( "json" )
+    print('------------------------------------ adListener')
+    print("------Ad event: ")
+    print( json.prettify( event ) )
+
+    print('------------------------------------ adListener')
+
+    if ( event.phase == "init" ) then  -- Successful initialization
+        print('------------------------------------ init', event.provider)
+        
+        admob.load( "banner", { adUnitId = myBannerAdUnitId } )
+
+        timer.performWithDelay( 10000, function()
+           
+            -- statusText.Text = "Banner is loaded and ready to show 2"
+            print('------------------------------------ show 2')
+            admob.show( "banner", { y='bottom', bgColor = '#FFFFFF' } )
+            print('------------------------------------ show 2')
+        end )
+    end
+end
+
+
 
 -- Start application point
 loadSounds()
@@ -471,55 +533,33 @@ setupExplosion()
 setupLand()
 initGame()
 loadBestScore()
-gameLoopTimer = timer.performWithDelay( 25, gameLoop, 0 ) -- este hacxe que se mueva el esceanrio con la funcion gameloop
+gameLoopTimer = timer.performWithDelay( 25, gameLoop, 0 ) 
 
 
--- -- debug text line
--- local loadingText = display.newText( "Debug info", display.contentCenterX, display.contentCenterY, nil, 20)
+-- admob.init( adListener, { appId = myAppId, testMode = true } )
+admob.init( adListener, { appId=myAppId } )
+-- admob.load( "banner", { adUnitId = myBannerAdUnitId, hasUserConsent = true } )
+-- admob.show( "banner", { x=0, y= 0, hasUserConsent = true } )
 
 
--- -- vk listener
--- local function vkListener( event )
---   loadingText.text = "version 1229\nevent = " .. event.method
--- 	if event.method == 'init' then
--- 		if event.status == 'success' then
---       loadingText.text = "html5 works correct version 1229"
--- --			loadingText:removeSelf( )
--- 		else
--- 			loadingText.text = "Error while loading\n(" .. tostring(event.data and event.data.message) .. ")"
--- 		end
--- 	end
--- end
 
 
--- -- appodeal listener
--- local function adListener( event )
---     if ( event.phase == "init" ) then  -- Successful initialization
---         -- maybe set a flag that you can see in all scenes to know that initialization is complete
 
---     elseif ( event.phase == "failed" ) then  -- The ad failed to load
---         print( event.type )
---         print( event.isError )
---         print( event.response )
---     end
--- end
 
-display.setStatusBar( display.HiddenStatusBar )
 
--- if system.getInfo('platform') ~= 'html5' then
--- 	timer.performWithDelay( 100, function( )
---     loadingText.text = "~html5"
--- 		vkListener{ method = 'init', status='success' }
--- 	end )
--- else
---   loadingText.text = "html5"
--- 	vk.init(vkListener)
--- end
 
--- --appodeal.init( adListener,
--- --      { appKey="d0b151949cc7fdaecc358106bb00d606fdc7d51b70436d36",
--- --      locationTracking = false,
--- --  	supportedAdTypes = {"interstitial"},
--- --          childDirectedTreatment = true,
--- --  	bannerAnimation = true,
--- --  	testMode = true } )
+
+
+
+
+
+
+-- local statusText = display.newText( "ADS STATUS", 20, 80, native.systemFontBold, 22 )
+-- statusText:setTextColor( 255 )
+
+
+
+
+
+-- 
+
