@@ -73,27 +73,14 @@ local function loadSounds()
     wingSound = audio.loadSound( "Sounds/flap.mp3" )  -- this sound is when bird is flying up and touch the screen
 end
 
+local function birdRandom ()
+    local randomFolder = math.random(1, 2)
+    local randomBird = math.random(1, 7)
+    local birdImage = "Assets/FlappyBirdAssets/Player/StyleBird" .. randomFolder .. "/Bird_" .. randomBird .. ".png"
 
-
-local function call_VK_event()
-    local args={}
-    args.user_id='33251324'
-    args.activity_id=2
-    args.value=score
-    -- vk.api('secure.addAppEvent', args)
+    return birdImage
 end
 
-
-local function saveScoreToVk()
-
-    if score>3 then
-        call_VK_event()
-    elseif score>0 then
-        -- vk.showLeaderboardBox(score)
-    else
-        -- vk.showShareBox("I just scored " .. score .. "! Create your own game with Corona.", {"https://coronalabs.com/", }, "wall")
-    end
-end
 
 
 local function calcRandomHole()
@@ -148,14 +135,14 @@ end
 local function setupBird()
     local options =
     {
-      width = 70,
-      height = 50,
+      width = 40,
+      height = 40,
       numFrames = 4,
-      sheetContentWidth = 280,  -- width of original 1x size of entire sheet
-      sheetContentHeight = 50  -- height of original 1x size of entire sheet
+      sheetContentWidth = 160,  -- width of original 1x size of entire sheet
+      sheetContentHeight = 40  -- height of original 1x size of entire sheet
     }
 --   local imageSheet = graphics.newImageSheet( "Assets/bird.png", options )
-    local imageSheet = graphics.newImageSheet( "Assets/FlappyBirdAssets/Player/StyleBird2/Bird2_3.png", options )
+    local imageSheet = graphics.newImageSheet(birdRandom(), options )
 
     local sequenceData = {
         name="walking",
@@ -279,7 +266,7 @@ local function crash()
     board.y = 0
     board.alpha = 1
 
-    saveScoreToVk()
+    -- saveScoreToVk()
 
 
 
@@ -397,6 +384,8 @@ local function backgroundRandom ()
   return background
 end
 
+
+
 local function setupImages()
     
 --   local ground = display.newImageRect( "Assets/ground.png", display.actualContentWidth, display.actualContentHeight )
@@ -490,37 +479,9 @@ setupExplosion()
 setupLand()
 initGame()
 loadBestScore()
--- timer.performWithDelay( 2000, function()
-    loadSounds()
--- end )
+loadSounds()
 
 gameLoopTimer = timer.performWithDelay( 25, gameLoop, 0 ) 
-
-
--- admob.init( adListener, { appId = myAppId, testMode = true } )
 admob.init( adListener, { appId=myAppId } )
--- admob.load( "banner", { adUnitId = myBannerAdUnitId, hasUserConsent = true } )
--- admob.show( "banner", { x=0, y= 0, hasUserConsent = true } )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
--- local statusText = display.newText( "ADS STATUS", 20, 80, native.systemFontBold, 22 )
--- statusText:setTextColor( 255 )
-
-
-
-
-
--- 
 
