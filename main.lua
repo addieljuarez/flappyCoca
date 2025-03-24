@@ -11,8 +11,8 @@
 
 
 local admob = require( "plugin.admob" )
-local myAppId = "ca-app-pub-0312758629867943~4865938586"
--- local myBannerAdUnitIdBottom = "ca-app-pub-0312758629867943/2370803034"
+local myAppId = "ca-app-pub-4294781738729561~1944325413"
+-- local myBannerAdUnitIdBottom = "ca-app-pub-4294781738729561/4811862023"
 local myBannerAdUnitIdBottom = "ca-app-pub-3940256099942544/6300978111"
 
 
@@ -33,7 +33,8 @@ local xLand = display.contentCenterX
 local yBird = display.contentCenterY-50
 local xBird = display.contentCenterX-50
 
-local wPipe = display.contentCenterX+10
+local wPipe = display.contentCenterX+40 -- con este numero da espacio de pixeles entre cada 3 pipes
+
 local yReady = display.contentCenterY-140
 
 local uBird = -200
@@ -63,10 +64,7 @@ local gold
 local pipes = {}
 
 local function loadSounds()
-    -- boomSound = audio.loadSound( "Sounds/sfx_boom.mp3" )
     dieSound = audio.loadSound( "Sounds/die.mp3" ) -- sonido de colision 
-    -- dieSound = audio.loadSound( "Sounds/sfx_boom.mp3" ) -- sonido de colision
-    -- hitSound = audio.loadSound( "Sounds/sfx_hit.caf" ) -- sonido de choque contra el piso
     hitSound = audio.loadSound( "Sounds/hit.mp3" ) -- sonido de choque contra el piso
     pointSound = audio.loadSound( "Sounds/point.mp3" ) -- sonido cuando pasas 5 pipes
     swooshingSound = audio.loadSound( "Sounds/swoosh.mp3" ) -- this sound is when init the game
@@ -77,14 +75,16 @@ local function birdRandom ()
     local randomFolder = math.random(1, 2)
     local randomBird = math.random(1, 7)
     local birdImage = "Assets/FlappyBirdAssets/Player/StyleBird" .. randomFolder .. "/Bird_" .. randomBird .. ".png"
-
     return birdImage
 end
 
 
 
 local function calcRandomHole()
-   return 100 + 20*math.random(10)
+    local h = 100 + 20*math.random(4)
+    -- local h = 100 + 20*math.random(10)
+    print('----h -------', h)
+    return h
 end
 
 local function loadBestScore()
@@ -123,12 +123,8 @@ local function saveBestScore()
         io.close( file )
     end
     file = nil
-
-
     -- show appodeal ad
     --  appodeal.show()
-
-
 end
 
 
@@ -148,8 +144,8 @@ local function setupBird()
         name="walking",
         start=1,
         count=3,
-        time=300,
-        loopCount = 2,   -- Optional ; default is 0 (loop indefinitely)
+        time=400,
+        loopCount = 3,   -- Optional ; default is 0 (loop indefinitely)
         loopDirection = "forward"    -- Optional ; values include "forward" or "bounce"
     }
 
@@ -171,8 +167,14 @@ local function initGame()
     -- title.text = hLand
 
     for i=1,3 do
-        pipes[i].x = 400 + display.contentCenterX * (i-1)
+        local dx = 500 + display.contentCenterX * (i-1) -- solo son pipes de los 3 primeros
+        -- local dx =  600 * i -- solo son pipes de los 3 primeros
+        print('----dx -------', dx)
+        pipes[i].x =  dx -- solo son pipes de los 3 primeros
+        -- pipes[i].x = 800 + wPipe * (i-1)
         pipes[i].y =  calcRandomHole()
+        -- aqui da los primeros 3 pipes la la altura de los huecos en y
+        -- pipes[i].y = 10
     end
     yBird = display.contentCenterY-50
     xBird = display.contentCenterX-50
@@ -183,8 +185,8 @@ local function initGame()
     board.y = 0
     board.alpha = 0
     audio.play( swooshingSound )
-    transition.to( bird, { time=300, x=xBird, y=yBird, rotation = 0 } )
-    transition.to( getReady, { time=600, y=yReady, transition=easing.outBounce, onComplete=prompt   } ) -- mueve el get ready al empezar el juego
+    transition.to( bird, { time=300, x=xBird, y=yBird, rotation = 0 } ) -- tranbsiscion de la posicion del pajaro
+    transition.to( getReady, { time=600, y=yReady, transition=easing.outBounce, onComplete=prompt   } ) -- mueve el get ready al empezar el juego mas tiempo es mas lento
 end
 
 
@@ -311,21 +313,27 @@ end
 
 
 local function gameLoop()
+    -- local eps = 10
     local eps = 10
     local leftEdge = -60
     if gameStatus == 1 then
         xLand = xLand + dt * uBird
         if xLand<0 then
-            xLand = display.contentCenterX*2+xLand
+            xLand = display.contentCenterX*2+xLand -- mueve la parte de abajo y la repite
         end
         land.x = xLand -- aqui empueza a avanzar el escenario
         for i=1,3 do
             local xb = xBird-eps
             local xOld = pipes[i].x
             local x = xOld + dt * uBird
+            -- print("------ xOld -----", xOld)
+            -- print("------ x -----", x)
+
             if x<leftEdge then
-                x = wPipe*3+x
+                x = wPipe * 3 + x -- cada 3 pipes empieza de nuevo 
+                -- x = wPipe
                 pipes[i].y =  calcRandomHole()
+                -- pipes[i].y = 10
             end
             if xOld > xb  and x <= xb then
                 score = score + 1
