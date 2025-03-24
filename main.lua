@@ -12,10 +12,7 @@
 
 local admob = require( "plugin.admob" )
 local myAppId = "ca-app-pub-4294781738729561~1944325413"
--- local myBannerAdUnitIdBottom = "ca-app-pub-4294781738729561/4811862023"
-local myBannerAdUnitIdBottom = "ca-app-pub-3940256099942544/6300978111"
-
-
+local myBannerAdUnitIdBottom = "ca-app-pub-4294781738729561/4811862023"
 
 
 
@@ -25,6 +22,10 @@ local gameStatus = 0
 -- gameStatus = 1 -- se inicia el juego y se mueve el escenario
 -- gameStatus = 2 -- se cambia el estado del juego a 2 y termina el juego todo se pausa cuando chocas
 -- gameStatus = 3 -- se cambia el estado del juego a 3 y termina el juego todo se pausa cuando chocas  y puedes empezar de nuevo
+
+-- local topInset, leftInset, bottomInset, rightInset = display.getSafeAreaInsets()
+-- print( "Safe Area Insets: ", topInset, leftInset, bottomInset, rightInset )
+
 
 local yLand = display.actualContentHeight - display.actualContentHeight*0.2
 local hLand = display.actualContentHeight * 0.1
@@ -63,6 +64,27 @@ local gold
 
 local pipes = {}
 
+
+-- local safeArea = display.newRect(
+--     display.safeScreenOriginX,
+--     display.safeScreenOriginY,
+--     display.safeActualContentWidth,
+--     display.safeActualContentHeight
+-- )
+-- safeArea:translate( safeArea.width*0.5, safeArea.height*0.5 )
+
+-- Gather insets (function returns these in the order of top, left, bottom, right)
+
+ 
+-- Create a vector rectangle sized exactly to the "safe area"
+-- local safeArea = display.newRect(
+--     display.screenOriginX + leftInset, 
+--     display.screenOriginY + topInset, 
+--     display.actualContentWidth - ( leftInset + rightInset ), 
+--     display.actualContentHeight - ( topInset + bottomInset )
+-- )
+-- safeArea:translate( safeArea.width*0.5, safeArea.height*0.5 )
+
 local function loadSounds()
     dieSound = audio.loadSound( "Sounds/die.mp3" ) -- sonido de colision 
     hitSound = audio.loadSound( "Sounds/hit.mp3" ) -- sonido de choque contra el piso
@@ -83,7 +105,7 @@ end
 local function calcRandomHole()
     local h = 100 + 20*math.random(4)
     -- local h = 100 + 20*math.random(10)
-    print('----h -------', h)
+    -- print('----h -------', h)
     return h
 end
 
@@ -95,18 +117,18 @@ local function loadBestScore()
 
     if not file then
         -- Error occurred; output the cause
-        print( "File error: " .. errorString )
+        -- print( "File error: " .. errorString )
     else
-        print( "Contents of " .. path )
+        -- print( "Contents of " .. path )
         -- Read data from file
         local contents = file:read( "*a" )
-        print( 'contents' .. contents )
+        -- print( 'contents' .. contents )
         -- Output the file contents
         bestScore = tonumber( contents )
         -- Close the file handle
         io.close( file )
     end
-    print( "bestScore = ", bestScore )
+    -- print( "bestScore = ", bestScore )
 
     file = nil
 end
@@ -117,7 +139,7 @@ local function saveBestScore()
     local file, errorString = io.open( path, "w" )
     if not file then
         -- Error occurred; output the cause
-        print( "File error: " .. errorString )
+        -- print( "File error: " .. errorString )
     else
         file:write( bestScore )
         io.close( file )
@@ -459,8 +481,6 @@ display.setStatusBar( display.HiddenStatusBar )
 
 local function adListener( event )
     local json = require( "json" )
-    print('------------------------------------ adListener')
-    print( json.prettify( event ) )
 
     if ( event.phase == "init" ) then  -- Successful initialization
         
@@ -468,10 +488,7 @@ local function adListener( event )
         
 
         timer.performWithDelay( 8000, function()
-           
-            print('------------------------------------ show 2')
-            admob.show( "banner", { y='bottom', bgColor = '#FFFFFF' } )
-            print('------------------------------------ show 2')
+            admob.show( "banner", { y='top', bgColor = '#FFFFFF' } )
         end )
 
     end
